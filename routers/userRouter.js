@@ -72,15 +72,7 @@ router.post("/", async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    // send the token in a HTTP-only cookie
-
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send();
+    res.json({ token });
   } catch (err) {
     console.error(err);
     res.status(500).send();
@@ -126,30 +118,11 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    // send the token in a HTTP-only cookie
-
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .send();
+    res.json({ token });
   } catch (err) {
     console.error(err);
     res.status(500).send();
   }
-});
-
-router.get("/logout", (req, res) => {
-  res
-    .cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0),
-      secure: true,
-      sameSite: "none",
-    })
-    .send();
 });
 
 // change account info
@@ -189,7 +162,7 @@ router.patch("/edit", auth, async (req, res) => {
 
 router.get("/loggedIn", (req, res) => {
   try {
-    const token = req.cookies.token;
+    const token = req.header("x-auth-token");
 
     if (!token) {
       return res.json({ isLoggedIn: false });
